@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Version>1.0.0</Version>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>GaEpd.EmailService</RootNamespace>
+        <PackageId>GaEpd.EmailService</PackageId>
+        <Authors>Douglas Waldron</Authors>
+        <Company>Georgia EPD</Company>
+        <Title>Georgia EPD-IT Email Service Library</Title>
+        <Description>Email service library</Description>
+        <Copyright>Copyright (c) State of Georgia 2024</Copyright>
+        <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/gaepdit/email-service</PackageProjectUrl>
+        <PackageIcon>epd-icon-tile.png</PackageIcon>
+        <RepositoryUrl>https://github.com/gaepdit/email-service.git</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageReleaseNotes>(Add release notes to CHANGELOG.md)</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../CHANGELOG.md" Pack="false" PackagePath="/"/>
+        <None Include="../../LICENSE" Pack="true" PackagePath="/"/>
+        <None Include="../../README.md">
+            <Pack>True</Pack>
+            <PackagePath>/</PackagePath>
+        </None>
+        <None Include="../assets/epd-icon-tile.png" Pack="true" PackagePath="/"/>
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MailKitLite" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="SonarAnalyzer.CSharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <Target Name="PrepareReleaseNotes" BeforeTargets="GenerateNuspec">
+        <ReadLinesFromFile File="../../CHANGELOG.md">
+            <Output TaskParameter="Lines" ItemName="ReleaseNotes"/>
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <PackageReleaseNotes>@(ReleaseNotes, '%0a')</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+
+</Project>
