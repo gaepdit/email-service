@@ -2,9 +2,8 @@
 
 ## Unreleased
 
-### Fixed
-
-- Email sender was truncated more than required when saving to the repository.
+- Updated to .NET 9.
+- Fixed: Email sender was truncated more than required when saving to the repository.
 
 ## [1.0.0] - 2024-12-04
 
