@@ -32,7 +32,7 @@ public record EmailLog
     {
         Id = Guid.NewGuid(),
         Sender = StringExtensions.ConcatWithSeparator([message.SenderName, $"<{message.SenderEmail}>"], " ")
-            .Truncate(200),
+            .Truncate(300),
         Subject = message.Subject.Truncate(200),
         Recipients = message.Recipients.ConcatWithSeparator(",").Truncate(2000),
         CopyRecipients = message.CopyRecipients.ConcatWithSeparator(",").Truncate(2000),
