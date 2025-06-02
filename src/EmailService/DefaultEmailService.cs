@@ -69,14 +69,18 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
         mimeMessage.To.AddRange(Settings!.AuditEmailRecipients
             .Select(address => new MailboxAddress(string.Empty, address)));
 
-        const string auditText = "This is a copy of the original email for auditing purposes. Original recipient: ";
+        var auditText =
+            $"This is a copy of the original email for auditing purposes. Original recipient: {message.Recipients.ConcatWithSeparator(", ")}";
 
         var auditBuilder = new BodyBuilder
         {
-            TextBody = string.Concat(auditText, message.Recipients.ConcatWithSeparator(", "), Environment.NewLine,
-                Environment.NewLine, message.TextBody),
-            HtmlBody = string.Concat($"<em>{auditText}{message.Recipients.ConcatWithSeparator(", ")}</em><br><br>",
-                message.HtmlBody),
+            TextBody = message.TextBody is null
+                ? null
+                : string.Concat(auditText, Environment.NewLine, "---", Environment.NewLine, Environment.NewLine,
+                    message.TextBody),
+            HtmlBody = message.HtmlBody is null
+                ? null
+                : string.Concat("<em>", auditText, "</em><br><br>", message.HtmlBody),
         };
         mimeMessage.Body = auditBuilder.ToMessageBody();
 
