@@ -26,9 +26,6 @@ var message = Message.Create(subject, recipientEmail, textBody, htmlBody, sender
 
 // Send the message. There is no need to await this call.
 _ = emailService.SendEmailAsync(message, token);
-
-// Optionally log the message. This requires implementing the IEmailLogRepository interface.
-await emailLogRepository.InsertAsync(message, token).ConfigureAwait(false);
 ```
 
 ## Configuration
@@ -54,8 +51,7 @@ The following configuration section should be added to your configuration file:
     "EnableEmailAuditing": true,
     "AuditEmailRecipients": [
       "Audit.Recipient@email.invalid"
-    ],
-    "EnableEmailLog": false
+    ]
   }
 }
 ```
@@ -72,15 +68,6 @@ The following configuration section should be added to your configuration file:
 * `EnableEmailAuditing`: Set to `true` to enable sending audit emails (useful for testing purposes).
 * `AuditEmailRecipients`: A list of email addresses to send audit emails to. *(Only used if `EnableEmailAuditing` is
   `true`.)*
-* `EnableEmailLog`: *Not used by the `DefaultEmailService`.* This is here as a convenience if you decide to implement
-  and use `IEmailLogRepository` (see below). Set to `true` to enable saving emails.
 
-Note that `EnableEmail`, `EnableEmailAuditing`, and `EnableEmailLog` operate independently of each other. You can enable
-or disable each feature individually.
-
-### Email Log Repository
-
-The `IEmailLogRepository` interface provides a single method, `InsertAsync(Message message)`, for logging each
-email. No implementation is provided by default, so if you want to enable email logging, you will need to create
-your own implementation and register it with the dependency injection container. The `EnableEmailLog` configuration
-setting is available if desired to enable or disable email logging. The `EmailLog` class is also available for use as a database entity if desired.
+Note that `EnableEmail` and `EnableEmailAuditing` operate independently of each other. You can enable or disable each
+feature individually.
