@@ -10,5 +10,4 @@ public class EmailServiceSettings
     public string DefaultSenderEmail { get; init; } = string.Empty;
     public bool EnableEmailAuditing { get; init; }
     public List<string> AuditEmailRecipients { get; init; } = null!;
-    public bool EnableEmailLog { get; init; }
 }
