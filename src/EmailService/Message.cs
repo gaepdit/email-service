@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace GaEpd.EmailService;
+﻿namespace GaEpd.EmailService;
 
 public record Message
 {
