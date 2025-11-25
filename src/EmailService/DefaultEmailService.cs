@@ -10,7 +10,7 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
 {
     private static EmailServiceSettings? Settings { get; set; }
 
-    public Task SendEmailAsync(Message message, CancellationToken token = default)
+    public async Task SendEmailAsync(Message message, CancellationToken token = default)
     {
         if (Settings is null)
         {
@@ -20,7 +20,7 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
 
         // If emailing is disabled, do nothing.
         if (Settings is { EnableEmail: false, EnableEmailAuditing: false })
-            return Task.CompletedTask;
+            return;
 
         if (message.SenderEmail is null && Settings.DefaultSenderEmail is null)
         {
@@ -30,16 +30,14 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
 
         // Send requested email if enabled.
         if (Settings.EnableEmail && message.Recipients.Count > 0)
-            SendRequestedEmail(message, token);
+            await SendRequestedEmailAsync(message, token);
 
         // Send auditing email if enabled.
         if (Settings is { EnableEmailAuditing: true, AuditEmailRecipients.Count: > 0 })
-            SendAuditingEmail(message, token);
-
-        return Task.CompletedTask;
+            await SendAuditingEmailAsync(message, token);
     }
 
-    private static void SendRequestedEmail(Message message, CancellationToken token)
+    private static async Task SendRequestedEmailAsync(Message message, CancellationToken token)
     {
         var mimeMessage = new MimeMessage();
 
@@ -56,10 +54,10 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
         };
         mimeMessage.Body = builder.ToMessageBody();
 
-        _ = EmailMessageAsync(mimeMessage, Settings!, token).ConfigureAwait(false);
+        await SendEmailMessageAsync(mimeMessage, Settings!, token).ConfigureAwait(false);
     }
 
-    private static void SendAuditingEmail(Message message, CancellationToken token)
+    private static async Task SendAuditingEmailAsync(Message message, CancellationToken token)
     {
         var mimeMessage = new MimeMessage();
 
@@ -84,10 +82,10 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
         };
         mimeMessage.Body = auditBuilder.ToMessageBody();
 
-        _ = EmailMessageAsync(mimeMessage, Settings, token).ConfigureAwait(false);
+        await SendEmailMessageAsync(mimeMessage, Settings, token).ConfigureAwait(false);
     }
 
-    private static async Task EmailMessageAsync(MimeMessage emailMessage, EmailServiceSettings settings,
+    private static async Task SendEmailMessageAsync(MimeMessage emailMessage, EmailServiceSettings settings,
         CancellationToken token)
     {
         if (!Enum.TryParse(settings.SecureSocketOption, out SecureSocketOptions secureSocketOption))
