@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- **Breaking change:** SMTP operations are now awaited allowing for appropriate capture of any exceptions.
+- **Breaking change:** Email addresses are now validated when creating the email message. Invalid addresses will cause
+  an `ArgumentException`.
+
 ## [1.2.0] - 2025-06-02
 
 - **Breaking change:** The Email Log DB entity, repository interface, and associated setting have all been removed. The
