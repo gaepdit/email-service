@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased
+## [1.3.0] - 2025-11-26
 
-- **Breaking change:** SMTP operations are now awaited allowing for appropriate capture of any exceptions.
-- **Breaking change:** Email addresses are now validated when creating the email message. Invalid addresses will cause
+- **Breaking change:** Async SMTP operations are now awaited allowing for appropriate capture of any exceptions.
+- **Breaking change:** Email addresses are now validated when creating an email message. Invalid addresses will throw
   an `ArgumentException`.
 
 ## [1.2.0] - 2025-06-02
@@ -29,10 +29,12 @@
 
 _Initial release._
 
-[1.2.0]: https://github.com/gaepdit/email-service/releases/tag/v1.2.0
-
-[1.1.1]: https://github.com/gaepdit/email-service/releases/tag/v1.1.1
+[1.0.0]: https://github.com/gaepdit/email-service/releases/tag/v1.0.0
 
 [1.1.0]: https://github.com/gaepdit/email-service/releases/tag/v1.1.0
 
-[1.0.0]: https://github.com/gaepdit/email-service/releases/tag/v1.0.0
+[1.1.1]: https://github.com/gaepdit/email-service/releases/tag/v1.1.1
+
+[1.2.0]: https://github.com/gaepdit/email-service/releases/tag/v1.2.0
+
+[1.3.0]: https://github.com/gaepdit/email-service/releases/tag/v1.3.0
