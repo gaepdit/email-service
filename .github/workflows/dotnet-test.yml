@@ -37,13 +37,13 @@ jobs:
           site: us3.datadoghq.com
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal --logger:nunit
+        run: dotnet test --no-build --verbosity normal --report-spekt-nunit
 
       - name: Upload test result artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
         with:
-          path: tests/**/TestResults.xml
+          path: .artifacts/EmailService.Tests/**/TestResults.xml
 
   publish-test-results:
     name: Publish test results
