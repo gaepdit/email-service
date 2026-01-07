@@ -538,4 +538,4 @@ FodyWeavers.xsd
 .idea/**/sonarlint-state.xml
 
 ## Build artifacts
-.artifacts/
+_artifacts/
