@@ -31,7 +31,7 @@ public record Message
         if (!recipients.AreAllValid())
             throw new ArgumentException("Recipient list includes invalid emails.", nameof(recipients));
 
-        if (!senderEmail.IsValid())
+        if (senderEmail != null && !senderEmail.IsValid())
             throw new ArgumentException("Sender email is invalid.", nameof(senderEmail));
 
         if (copyRecipients != null && recipients.Count > 0 && !copyRecipients.AreAllValid())
