@@ -5,6 +5,7 @@ namespace EmailService.Tests;
 public class CreateMessageTests
 {
     private const string ValidEmail = "a@example.com";
+    private const string InvalidEmail = "a.example.com";
 
     [Test]
     public void Create_WithEmptySubject_Throws()
@@ -12,6 +13,30 @@ public class CreateMessageTests
         var func = () => Message.Create(subject: "", recipients: [ValidEmail], senderEmail: ValidEmail, textBody: "d",
             htmlBody: null);
         func.Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void Create_WithEmptySender_Throws()
+    {
+        var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: "", textBody: "d",
+            htmlBody: null);
+        func.Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void Create_WithInvalidSender_Throws()
+    {
+        var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: InvalidEmail,
+            textBody: "d", htmlBody: null);
+        func.Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void Create_WithNullSender_DoesNotThrow()
+    {
+        var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: null, textBody: "d",
+            htmlBody: null);
+        func.Should().NotThrow();
     }
 
     [Test]
@@ -34,8 +59,8 @@ public class CreateMessageTests
     [Test]
     public void Create_WithInvalidRecipient_Throws()
     {
-        var func = () => Message.Create(subject: "a", recipients: ["a.b.c"], senderEmail: ValidEmail, textBody: "d",
-            htmlBody: null);
+        var func = () => Message.Create(subject: "a", recipients: [InvalidEmail], senderEmail: ValidEmail,
+            textBody: "d", htmlBody: null);
         func.Should().Throw<ArgumentException>();
     }
 
@@ -72,7 +97,7 @@ public class CreateMessageTests
     }
 
     [Test]
-    public void Create_WithInvalidCopyRecipient_Throws()
+    public void Create_WithCopyRecipient_Throws()
     {
         var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: ValidEmail, textBody: "d",
             htmlBody: null, copyRecipients: ["a.b.c"]);
