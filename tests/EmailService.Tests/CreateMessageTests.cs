@@ -32,7 +32,7 @@ public class CreateMessageTests
     }
 
     [Test]
-    public void Create_WithNullSender_DoesNotThrow()
+    public void Create_WithNullSender_Succeeds()
     {
         var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: null, textBody: "d",
             htmlBody: null);
@@ -73,7 +73,7 @@ public class CreateMessageTests
     }
 
     [Test]
-    public void Create_WithTextBody_DoesNotThrow()
+    public void Create_WithTextBody_Succeeds()
     {
         var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: ValidEmail, textBody: "d",
             htmlBody: null);
@@ -81,7 +81,7 @@ public class CreateMessageTests
     }
 
     [Test]
-    public void Create_WithHtmlBody_DoesNotThrow()
+    public void Create_WithHtmlBody_Succeeds()
     {
         var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: ValidEmail, textBody: null,
             htmlBody: "d");
@@ -89,7 +89,7 @@ public class CreateMessageTests
     }
 
     [Test]
-    public void Create_WithTextAndHtmlBody_DoesNotThrow()
+    public void Create_WithTextAndHtmlBody_Succeeds()
     {
         var func = () => Message.Create(subject: "a", recipients: [ValidEmail], senderEmail: ValidEmail, textBody: "d",
             htmlBody: "e");
