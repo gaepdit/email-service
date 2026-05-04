@@ -1,8 +1,5 @@
 ﻿using GaEpd.EmailService.Utilities;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace GaEpd.EmailService;
 
@@ -19,81 +16,44 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
         }
 
         // If emailing is disabled, do nothing.
-        if (Settings is { EnableEmail: false, EnableEmailAuditing: false })
-            return;
+        if (Settings is { EnableEmail: false, EnableEmailAuditing: false }) return;
 
-        if (message.SenderEmail is null && Settings.DefaultSenderEmail is null)
-        {
+        // Use the default sender name and email if none is provided.
+        message.SenderName ??= Settings.DefaultSenderName;
+        message.SenderEmail ??= Settings.DefaultSenderEmail;
+
+        // If no sender email (or default) is provided, throw an exception.
+        if (string.IsNullOrWhiteSpace(message.SenderEmail))
             throw new ArgumentException(
                 "Either a Sender Email must be included with the Message or a Default Sender Email must be configured.");
-        }
 
         // Send requested email if enabled.
-        if (Settings.EnableEmail && message.Recipients.Count > 0)
-            await SendRequestedEmailAsync(message, token);
+        if (Settings.EnableEmail)
+        {
+            var mimeMessage = EmailUtilities.CreateMimeMessage(message);
+            await EmailUtilities.SendEmailAsync(mimeMessage, Settings!, token).ConfigureAwait(false);
+        }
 
         // Send auditing email if enabled.
-        if (Settings is { EnableEmailAuditing: true, AuditEmailRecipients.Count: > 0 })
-            await SendAuditingEmailAsync(message, token);
-    }
+        if (Settings is not { EnableEmailAuditing: true, AuditEmailRecipients.Count: > 0 }) return;
 
-    private static async Task SendRequestedEmailAsync(Message message, CancellationToken token)
-    {
-        var mimeMessage = new MimeMessage();
+        const string auditText = "This is a copy of the original email for auditing purposes.";
+        var auditRecipients = $"Original recipient: {message.Recipients.ConcatWithSeparator(", ")}";
 
-        mimeMessage.From.Add(new MailboxAddress(message.SenderName ?? Settings!.DefaultSenderName,
-            message.SenderEmail ?? Settings!.DefaultSenderEmail));
-        mimeMessage.Subject = message.Subject;
-        mimeMessage.To.AddRange(message.Recipients.Select(address => new MailboxAddress(string.Empty, address)));
-        mimeMessage.Cc.AddRange(message.CopyRecipients.Select(address => new MailboxAddress(string.Empty, address)));
+        message.TextBody = message.TextBody is null
+            ? null
+            : string.Concat(auditText, Environment.NewLine, auditRecipients, Environment.NewLine, "---",
+                Environment.NewLine, Environment.NewLine, message.TextBody);
 
-        var builder = new BodyBuilder
-        {
-            TextBody = message.TextBody,
-            HtmlBody = message.HtmlBody,
-        };
-        mimeMessage.Body = builder.ToMessageBody();
+        message.HtmlBody = message.HtmlBody is null
+            ? null
+            : string.Concat("<em>", auditText, "<br>", auditRecipients, "</em><br><br>", message.HtmlBody);
 
-        await SendEmailMessageAsync(mimeMessage, Settings!, token).ConfigureAwait(false);
-    }
+        message.Recipients.Clear();
+        message.Recipients.AddRange(Settings!.AuditEmailRecipients);
+        message.CopyRecipients.Clear();
 
-    private static async Task SendAuditingEmailAsync(Message message, CancellationToken token)
-    {
-        var mimeMessage = new MimeMessage();
-
-        mimeMessage.From.Add(new MailboxAddress(message.SenderName ?? Settings!.DefaultSenderName,
-            message.SenderEmail ?? Settings!.DefaultSenderEmail));
-        mimeMessage.Subject = message.Subject;
-        mimeMessage.To.AddRange(Settings!.AuditEmailRecipients
-            .Select(address => new MailboxAddress(string.Empty, address)));
-
-        var auditText =
-            $"This is a copy of the original email for auditing purposes. Original recipient: {message.Recipients.ConcatWithSeparator(", ")}";
-
-        var auditBuilder = new BodyBuilder
-        {
-            TextBody = message.TextBody is null
-                ? null
-                : string.Concat(auditText, Environment.NewLine, "---", Environment.NewLine, Environment.NewLine,
-                    message.TextBody),
-            HtmlBody = message.HtmlBody is null
-                ? null
-                : string.Concat("<em>", auditText, "</em><br><br>", message.HtmlBody),
-        };
-        mimeMessage.Body = auditBuilder.ToMessageBody();
-
-        await SendEmailMessageAsync(mimeMessage, Settings, token).ConfigureAwait(false);
-    }
-
-    private static async Task SendEmailMessageAsync(MimeMessage emailMessage, EmailServiceSettings settings,
-        CancellationToken token)
-    {
-        if (!Enum.TryParse(settings.SecureSocketOption, out SecureSocketOptions secureSocketOption))
-            secureSocketOption = SecureSocketOptions.Auto;
-        using var client = new SmtpClient();
-        await client.ConnectAsync(settings.SmtpHost, settings.SmtpPort, secureSocketOption, token)
-            .ConfigureAwait(false);
-        await client.SendAsync(emailMessage, token).ConfigureAwait(false);
-        await client.DisconnectAsync(true, token).ConfigureAwait(false);
+        var auditMimeMessage = EmailUtilities.CreateMimeMessage(message);
+        await EmailUtilities.SendEmailAsync(auditMimeMessage, Settings, token).ConfigureAwait(false);
     }
 }

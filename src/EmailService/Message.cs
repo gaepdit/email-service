@@ -4,12 +4,13 @@ namespace GaEpd.EmailService;
 
 public record Message
 {
+    private Message() { }
     public string Subject { get; private set; } = string.Empty;
     public List<string> Recipients { get; } = [];
-    public string? SenderName { get; private set; }
-    public string? SenderEmail { get; private set; }
-    public string? TextBody { get; private set; }
-    public string? HtmlBody { get; private set; }
+    public string? SenderName { get; internal set; }
+    public string? SenderEmail { get; internal set; }
+    public string? TextBody { get; internal set; }
+    public string? HtmlBody { get; internal set; }
     public List<string> CopyRecipients { get; } = [];
 
     public static Message Create(string subject, string recipient, string? textBody, string? htmlBody,
