@@ -24,9 +24,12 @@ The `IEmailService` interface provides a single method, `SendEmailAsync(Message 
 // Create the email message.
 var message = Message.Create(subject, recipientEmail, textBody, htmlBody, senderName, senderEmail, [ccRecipient]);
 
-// Send the message. There is no need to await this call.
-_ = emailService.SendEmailAsync(message, token);
+// Send the message.
+await emailService.SendEmailAsync(message, token);
 ```
+
+Note: While the sender name and email must be defined separately, the recipients (and CC recipients) can be formatted as
+a string with both user and email, i.e., `"User Name <user.name@example.com>"`.
 
 ## Configuration
 
