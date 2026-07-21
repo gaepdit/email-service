@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.1] - 2026-07-21
+
+- Updated NuGet packages.
+
 ## [1.5.0] - 2026-05-04
 
 - Email recipients (and CC recipients) can now be formatted with display names. For example,
@@ -55,5 +59,5 @@ _Initial release._
 [1.4.0]: https://github.com/gaepdit/email-service/releases/tag/v1.4.0
 [1.4.1]: https://github.com/gaepdit/email-service/releases/tag/v1.4.1
 [1.4.2]: https://github.com/gaepdit/email-service/releases/tag/v1.4.2
-
 [1.5.0]: https://github.com/gaepdit/email-service/releases/tag/v1.5.0
+[1.5.1]: https://github.com/gaepdit/email-service/releases/tag/v1.5.1
