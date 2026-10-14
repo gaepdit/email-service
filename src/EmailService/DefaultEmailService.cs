@@ -31,7 +31,7 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
         if (Settings.EnableEmail)
         {
             var mimeMessage = EmailUtilities.CreateMimeMessage(message);
-            await EmailUtilities.SendEmailAsync(mimeMessage, Settings!, token).ConfigureAwait(false);
+            await EmailUtilities.SendEmailAsync(mimeMessage, Settings, token).ConfigureAwait(false);
         }
 
         // Send auditing email if enabled.
@@ -50,7 +50,7 @@ public class DefaultEmailService(IConfiguration configuration) : IEmailService
             : string.Concat("<em>", auditText, "<br>", auditRecipients, "</em><br><br>", message.HtmlBody);
 
         message.Recipients.Clear();
-        message.Recipients.AddRange(Settings!.AuditEmailRecipients);
+        message.Recipients.AddRange(Settings.AuditEmailRecipients);
         message.CopyRecipients.Clear();
 
         var auditMimeMessage = EmailUtilities.CreateMimeMessage(message);
