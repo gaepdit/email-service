@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.2] - 2026-10-14
+
+- Updated dependencies.
+
 ## [1.5.1] - 2026-07-21
 
 - Updated NuGet packages.
@@ -61,3 +65,4 @@ _Initial release._
 [1.4.2]: https://github.com/gaepdit/email-service/releases/tag/v1.4.2
 [1.5.0]: https://github.com/gaepdit/email-service/releases/tag/v1.5.0
 [1.5.1]: https://github.com/gaepdit/email-service/releases/tag/v1.5.1
+[1.5.2]: https://github.com/gaepdit/email-service/releases/tag/v1.5.2
